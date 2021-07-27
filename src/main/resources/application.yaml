@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - OPTIONS
+              - UPDATE
+              - DELETE
+              - PATCH
+      routes:
+        - id: public
+          uri: https://g-poc-service-without-security.herokuapp.com/api/public
+          predicates:
+            - Path=/api/public
+
+        - id: private
+          uri: https://g-poc-service-without-security.herokuapp.com/api/private
+          predicates:
+            - Path=/api/private
+
+        - id: create-user
+          uri: https://g-poc-service-without-security.herokuapp.com/api/admin/user
+          predicates:
+            - Path=/api/admin/user
+
+        - id: create-interrogation
+          uri: https://g-poc-service-without-security.herokuapp.com/api/user/interrogation
+          predicates:
+            - Path=/api/user/interrogation
+
+        - id: find-user
+          uri: https://g-poc-service-without-security.herokuapp.com/api/find-user
+          predicates:
+            - Path=/api/find-user
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://jgarbora.eu.auth0.com/
+          audience: geneva-poc-api
+
+server:
+  port: 8181
+
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway: TRACE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
