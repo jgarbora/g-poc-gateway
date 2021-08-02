@@ -1,10 +1,7 @@
 package com.g.g.apigateway.adapter;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
@@ -21,8 +18,6 @@ import java.util.Map;
 @Service
 @Slf4j
 public class Auth0Adapter {
-
-    private final static Logger LOGGER = LoggerFactory.getLogger(Auth0Adapter.class);
 
     @Value("${baseurl:https://jgarbora.eu.auth0.com}")
     private String baseUrl;
@@ -44,7 +39,7 @@ public class Auth0Adapter {
         body.put("audience","https://jgarbora.eu.auth0.com/api/v2/");
         body.put("grant_type","client_credentials");
 
-        LOGGER.info("clientId: {} , clientSecret: {}", clientId, clientSecret);
+        log.debug("clientId: {} , clientSecret: {}", clientId, clientSecret);
 
         tokenResponse = restTemplate.exchange(baseUrl+"/oauth/token", HttpMethod.POST, new HttpEntity<>(body, buildHeaders()), LinkedHashMap.class);
     }
@@ -60,7 +55,7 @@ public class Auth0Adapter {
     public LinkedHashMap findUser(String subject) {
         // example https://jgarbora.eu.auth0.com/api/v2/users/auth0%7C60f879147ddc3f0069ecd7bf
         String url = String.format("%s/api/v2/users/%s", baseUrl, subject);
-        log.info("{}",url);
+        log.debug("{}",url);
 
         ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(buildHeadersForAuth0Api()), LinkedHashMap.class);
         if (responseEntity.hasBody() && responseEntity.getStatusCode().is2xxSuccessful()) {

@@ -1,8 +1,6 @@
 package com.g.g.apigateway.adapter;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import redis.embedded.RedisServer;
 
@@ -14,9 +12,6 @@ import javax.annotation.PreDestroy;
 public class RedisAdapter {
 
     private RedisServer redisServer;
-
-    @Autowired
-    private CacheManager cacheManager;
 
     @PostConstruct
     public void postConstruct() {

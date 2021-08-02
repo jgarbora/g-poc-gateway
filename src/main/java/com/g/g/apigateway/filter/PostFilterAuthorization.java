@@ -56,7 +56,7 @@ public class PostFilterAuthorization extends AbstractGatewayFilterFactory<PostFi
                 }
 
                 LinkedHashMap userResponse = userService.findUser(payload.get("sub").toString());
-                log.info("{}",userResponse);
+                log.debug("{}",userResponse);
 
                 ServerHttpRequest request = exchange.getRequest()
                         .mutate()

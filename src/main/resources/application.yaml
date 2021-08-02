@@ -62,19 +62,19 @@ logging:
       g:
         g:
           apigateway:
-            filter: DEBUG
+            filter: INFO
     org:
       springframework:
         cloud:
-          gateway: TRACE
-        security: TRACE
+          gateway: INFO
+        security: INFO
+        cache: INFO
 
 management:
   endpoints:
     web:
       exposure:
         include: '*'
-
 
 server:
   port: 8181
