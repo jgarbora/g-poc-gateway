@@ -5,14 +5,13 @@ import com.g.g.apigateway.helper.JwtHelper;
 import com.g.g.apigateway.adapter.Auth0Adapter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
@@ -28,12 +27,15 @@ public class PostFilterAuthorization extends AbstractGatewayFilterFactory<PostFi
         super(PostFilterAuthorization.Config.class);
     }
 
-    private Map<String, List<String>> permissionsMap = new HashMap<>();
+    private final Map<String, String> permissionsMap = new HashMap<>();
+
+    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     @PostConstruct
     void init() {
-        permissionsMap.put("/api/admin/user", Arrays.asList("create:user"));
-        permissionsMap.put("/api/user/interrogation", Arrays.asList("create:interrogation"));
+        permissionsMap.put("create:user", "/api/user");
+        permissionsMap.put("read:user", "/api/user/**");
+        permissionsMap.put("create:interrogation", "/api/interrogation");
     }
 
     @Autowired
@@ -56,12 +58,11 @@ public class PostFilterAuthorization extends AbstractGatewayFilterFactory<PostFi
                 }
 
                 LinkedHashMap userResponse = userService.findUser(payload.get("sub").toString());
-                log.debug("{}",userResponse);
 
                 ServerHttpRequest request = exchange.getRequest()
                         .mutate()
                         .headers(httpHeaders ->
-                                httpHeaders.set("app-metada", userResponse.get("app_metadata").toString()))
+                                httpHeaders.set("app-metadata", userResponse.get("app_metadata").toString()))
                         .build();
 
                 return chain.filter(exchange.mutate().request(request).build());
@@ -77,21 +78,17 @@ public class PostFilterAuthorization extends AbstractGatewayFilterFactory<PostFi
 
     private boolean hasAuthority(ServerHttpRequest request, ArrayList<String> userPermissions) {
 
-        // wildcard for endpoints without Authorization
-        List<String> appPermissions = permissionsMap.get(request.getPath().toString());
-
         if (CollectionUtils.isEmpty(userPermissions)) {
             throwNotAuthorizedException();
         }
 
-        for (String appPermission: appPermissions) {
-            for (String userPermission: userPermissions ) {
-                if (StringUtils.equals(appPermission, userPermission)) {
-                    log.debug("hasAuthority matched {}" , appPermission );
-                    return true;
-                }
+        for (String userPermission : userPermissions) {
+            if (antPathMatcher.match(permissionsMap.get(userPermission), request.getPath().toString())) {
+                log.debug("hasAuthority match: {} / {}", permissionsMap.get(userPermission), request.getPath());
+                return true;
             }
         }
+
         return false;
     }
 

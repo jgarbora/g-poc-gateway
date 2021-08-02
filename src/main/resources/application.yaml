@@ -24,10 +24,10 @@ spring:
           predicates:
             - Path=/api/private
 
-        - id: create-user
-          uri: https://g-poc-service-without-security.herokuapp.com/api/admin/user
+        - id: crud-user
+          uri: http://127.0.0.1:8080/api/user
           predicates:
-            - Path=/api/admin/user
+            - Path=/api/user/**
           filters:
             - PostFilterAuthorization
 
@@ -62,13 +62,13 @@ logging:
       g:
         g:
           apigateway:
-            filter: INFO
+            filter: trace
     org:
       springframework:
         cloud:
-          gateway: INFO
-        security: INFO
-        cache: INFO
+          gateway: trace
+        security: trace
+        cache: trace
 
 management:
   endpoints:

@@ -30,7 +30,7 @@ public class Auth0Adapter {
 
     private ResponseEntity<LinkedHashMap> tokenResponse;
 
-    private RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public void init() {
         Map<String, String> body = new HashMap<>();
@@ -59,6 +59,7 @@ public class Auth0Adapter {
 
         ResponseEntity<LinkedHashMap> responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(buildHeadersForAuth0Api()), LinkedHashMap.class);
         if (responseEntity.hasBody() && responseEntity.getStatusCode().is2xxSuccessful()) {
+            log.debug("{}", responseEntity.getBody());
             return responseEntity.getBody();
         }
         log.error("get user fail, {}",responseEntity.getStatusCode());
