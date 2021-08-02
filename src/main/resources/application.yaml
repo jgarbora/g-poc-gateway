@@ -28,16 +28,21 @@ spring:
           uri: https://g-poc-service-without-security.herokuapp.com/api/admin/user
           predicates:
             - Path=/api/admin/user
+          filters:
+            - PostFilterAuthorization
 
         - id: create-interrogation
           uri: https://g-poc-service-without-security.herokuapp.com/api/user/interrogation
           predicates:
             - Path=/api/user/interrogation
+          filters:
+            - PostFilterAuthorization
 
         - id: find-user
           uri: https://g-poc-service-without-security.herokuapp.com/api/find-user
           predicates:
             - Path=/api/find-user
+
   security:
     oauth2:
       resourceserver:
@@ -45,19 +50,34 @@ spring:
           issuer-uri: https://jgarbora.eu.auth0.com/
           audience: geneva-poc-api
 
-server:
-  port: 8181
+auth0:
+  management:
+    api:
+      clientSecret: ${AUTH0_API_CLIENT_SECRET}
+      clientId: ${AUTH0_API_CLIENT_ID}
 
 logging:
   level:
+    com:
+      g:
+        g:
+          apigateway:
+            filter: DEBUG
     org:
       springframework:
         cloud:
           gateway: TRACE
+        security: TRACE
 
 management:
   endpoints:
     web:
       exposure:
         include: '*'
+
+
+server:
+  port: 8181
+
+
 

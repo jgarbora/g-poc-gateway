@@ -24,7 +24,7 @@ public class SecurityConfiguration {
     SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) throws Exception {
         http
                 .authorizeExchange()
-                .pathMatchers("/resource").hasAuthority("SCOPE_resource.read")
+              //  .pathMatchers("/api/**").hasAuthority("SCOPE_create:user")
                 .anyExchange().authenticated()
                 .and()
                 .oauth2ResourceServer()
