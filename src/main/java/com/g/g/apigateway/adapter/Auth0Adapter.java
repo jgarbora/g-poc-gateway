@@ -66,8 +66,6 @@ public class Auth0Adapter {
         throw new RuntimeException("couldn't get user information for subject " + subject);
     }
 
-
-
     private HttpHeaders buildHeadersForAuth0Api() {
         if (tokenResponse == null) {
             init();

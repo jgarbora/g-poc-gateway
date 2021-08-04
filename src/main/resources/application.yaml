@@ -23,25 +23,31 @@ spring:
           uri: https://g-poc-service-without-security.herokuapp.com/api/private
           predicates:
             - Path=/api/private
-
-        - id: crud-user
-          uri: http://127.0.0.1:8080/api/user
-          predicates:
-            - Path=/api/user/**
           filters:
-            - PostFilterAuthorization
+            - AddCorsFilter
+
+        - id: users-update
+          uri: http://127.0.0.1:8080/api/v0/users
+          predicates:
+            - Path=/api/v0/users/**
+            - Method=PATCH
+          filters:
+            - UpdateUserAuthorizationFilter
+
+        - id: users-CRD
+          uri: http://127.0.0.1:8080/api/v0/users
+          predicates:
+            - Path=/api/v0/users/**
+            - Method=GET,POST,DELETE
+          filters:
+            - AuthorizationFilter
 
         - id: create-interrogation
-          uri: https://g-poc-service-without-security.herokuapp.com/api/user/interrogation
+          uri: https://g-poc-service-without-security.herokuapp.com/api/interrogation
           predicates:
-            - Path=/api/user/interrogation
+            - Path=/api/interrogation
           filters:
-            - PostFilterAuthorization
-
-        - id: find-user
-          uri: https://g-poc-service-without-security.herokuapp.com/api/find-user
-          predicates:
-            - Path=/api/find-user
+            - AuthorizationFilter
 
   security:
     oauth2:
