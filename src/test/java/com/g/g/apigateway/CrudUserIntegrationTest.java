@@ -24,7 +24,10 @@ class CrudUserIntegrationTest {
 
     Faker faker = new Faker();
 
-    private static final Map<String, String> roleMap = Map.of("admin", "rol_vJ8LvtkaBizBowVd", "user", "rol_n5ecegE12SByX7Oo");
+    public static final Map<String, String> ROLE_MAP = new HashMap<String, String>() {{
+        put("admin", "rol_vJ8LvtkaBizBowVd");
+        put("user", "rol_n5ecegE12SByX7Oo");
+    }};
 
     @Test
     void crudAdminTest() throws Exception {
@@ -68,7 +71,7 @@ class CrudUserIntegrationTest {
 
     private AssignRolesToAUserRequest assignRolesToAUserRequestBuilder(String role) {
         return AssignRolesToAUserRequest.builder()
-                .roles(Arrays.asList(roleMap.get(role)))
+                .roles(Arrays.asList(ROLE_MAP.get(role)))
                 .build();
     }
 
