@@ -32,7 +32,7 @@ spring:
           uri: https://g-poc-user-wrapper.herokuapp.com/api/v0/users
           predicates:
             - Path=/api/v0/users/**
-            - Method=PATCH
+            - Method=PATCH,OPTIONS
           filters:
             - UpdateUserAuthorizationFilter
 
@@ -40,7 +40,7 @@ spring:
           uri: https://g-poc-user-wrapper.herokuapp.com/api/v0/users
           predicates:
             - Path=/api/v0/users/**
-            - Method=GET,POST,DELETE
+            - Method=GET,POST,DELETE,OPTIONS
           filters:
             - AuthorizationFilter
 
