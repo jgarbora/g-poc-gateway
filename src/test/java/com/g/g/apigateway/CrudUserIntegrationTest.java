@@ -3,7 +3,6 @@ package com.g.g.apigateway;
 import com.auth0.dto.api.v2.users.*;
 import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,8 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 @SpringBootTest
 @Slf4j
@@ -25,6 +23,8 @@ class CrudUserIntegrationTest {
     RestTemplate restTemplate = new RestTemplate();
 
     Faker faker = new Faker();
+
+    private static final Map<String, String> roleMap = Map.of("admin", "rol_vJ8LvtkaBizBowVd", "user", "rol_n5ecegE12SByX7Oo");
 
     @Test
     void crudAdminTest() throws Exception {
@@ -68,7 +68,7 @@ class CrudUserIntegrationTest {
 
     private AssignRolesToAUserRequest assignRolesToAUserRequestBuilder(String role) {
         return AssignRolesToAUserRequest.builder()
-                .roles(Arrays.asList(role))
+                .roles(Arrays.asList(roleMap.get(role)))
                 .build();
     }
 
