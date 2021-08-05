@@ -5,6 +5,7 @@ import com.g.g.apigateway.helper.AuthorizationHelper;
 import com.g.g.apigateway.helper.JwtHelper;
 import com.g.g.apigateway.adapter.Auth0Adapter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -62,13 +63,16 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
 
                 LinkedHashMap userResponse = auth0Adapter.findUser(payload.get("sub").toString());
 
-                ServerHttpRequest request = exchange.getRequest()
-                        .mutate()
-                        .headers(httpHeaders ->
-                                httpHeaders.set("app-metadata", userResponse.get("app_metadata").toString()))
-                        .build();
+                if (userResponse.get("app_metadata") != null) {
+                    ServerHttpRequest request = exchange.getRequest()
+                            .mutate()
+                            .headers(httpHeaders ->
+                                    httpHeaders.set("app-metadata", userResponse.get("app_metadata").toString()))
+                            .build();
+                    return chain.filter(exchange.mutate().request(request).build());
+                }
 
-                return chain.filter(exchange.mutate().request(request).build());
+                return chain.filter(exchange);
 
             } catch (JsonProcessingException e) {
                 return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid token"));
