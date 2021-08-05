@@ -6,6 +6,7 @@ spring:
       globalcors:
         corsConfigurations:
           '[/**]':
+            allowedHeaders: "*"
             allowedOrigins: "*"
             allowedMethods:
               - GET
@@ -13,18 +14,19 @@ spring:
               - UPDATE
               - DELETE
               - PATCH
+              - POST
       routes:
         - id: public
           uri: https://g-poc-service-without-security.herokuapp.com/api/public
           predicates:
             - Path=/api/public
+            - Method=GET,OPTIONS
 
         - id: private
           uri: https://g-poc-service-without-security.herokuapp.com/api/private
           predicates:
             - Path=/api/private
-          filters:
-            - AddCorsFilter
+            - Method=GET,OPTIONS
 
         - id: users-update
           uri: http://127.0.0.1:8080/api/v0/users
@@ -68,13 +70,13 @@ logging:
       g:
         g:
           apigateway:
-            filter: trace
+            filter: off
     org:
       springframework:
         cloud:
-          gateway: trace
+          gateway: off
         security: trace
-        cache: trace
+        cache: off
 
 management:
   endpoints:
