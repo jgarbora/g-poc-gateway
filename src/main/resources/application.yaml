@@ -44,10 +44,11 @@ spring:
           filters:
             - AuthorizationFilter
 
-        - id: create-interrogation
+        - id: interrogation-CRUD
           uri: https://g-poc-service-without-security.herokuapp.com/api/interrogation
           predicates:
             - Path=/api/interrogation
+            - Method=GET,POST,PATCH,PUT,OPTIONS
           filters:
             - AuthorizationFilter
 
